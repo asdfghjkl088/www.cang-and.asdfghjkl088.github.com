@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苍和世界服务器 - 官网</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Microsoft YaHei', sans-serif; }
+        body { background: #f5f5f5; color: #333; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; margin-bottom: 40px; padding: 30px 0; background: #2c3e50; color: #fff; border-radius: 10px; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .server-info { background: #fff; padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .info-item { margin-bottom: 15px; font-size: 1.1rem; }
+        .info-item strong { color: #2980b9; }
+        .btn { display: inline-block; padding: 12px 30px; background: #2980b9; color: #fff; text-decoration: none; border-radius: 5px; font-size: 1.1rem; cursor: pointer; border: none; transition: background 0.3s; }
+        .btn:hover { background: #1a5276; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .gallery-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .contact { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .contact a { color: #2980b9; text-decoration: none; }
+        .contact a:hover { text-decoration: underline; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; text-align: center; }
+        .modal input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; }
+        .registered-info { background: #e8f4fd; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center; }
+        .registered-info strong { color: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部标题 -->
+        <header>
+            <h1>苍和世界服务器</h1>
+            <p>官方唯一认证官网</p>
+        </header>
+
+        <!-- 已注册玩家信息展示 -->
+        <div class="registered-info" id="registeredInfo" style="display: none;">
+            <p><strong>已注册信息：</strong>玩家代号：<span id="savedPlayerName"></span> | 邮箱：<span id="savedPlayerEmail"></span></p>
+            <p>等待管理员审核通过后，将自动为你添加服务器并跳转！</p>
+        </div>
+
+        <!-- 服务器信息 -->
+        <section class="server-info">
+            <div class="info-item"><strong>服务器地址：</strong>frp-ski.com:24800</div>
+            <div class="info-item"><strong>QQ群：</strong><a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=erpkgQVkd8tBzz1832RuyIyz9s35YW1b&authKey=IisJTQSvloD%2BnT3%2FYgEN2XWd7k6957UohjvaQzossEsy5eDonH9CzAsIIP5LGspS&noverify=0&group_code=916646393" target="_blank">点击加入【苍和的世界】</a></div>
+            <button class="btn" id="registerBtn" onclick="openRegisterModal()">注册申请加入</button>
+        </section>
+
+        <!-- 服务器展示图片 -->
+        <section class="gallery">
+            <img src="ww1.png" alt="服务器展示图1" class="gallery-img">
+            <img src="ww2.png" alt="服务器展示图2" class="gallery-img">
+            <img src="ww3.png" alt="服务器展示图3" class="gallery-img">
+            <img src="ww4.png" alt="服务器展示图4" class="gallery-img">
+        </section>
+
+        <!-- 联系方式 -->
+        <section class="contact">
+            <h2>联系方式</h2>
+            <div class="info-item"><strong>苍和邮箱：</strong><a href="mailto:cangkonghelong@outlook.com?subject=苍和世界服务器申请咨询&body=请输入你的咨询内容...">cangkonghelong@outlook.com</a></div>
+            <div class="info-item"><strong>白工程邮箱：</strong><a href="mailto:cangkonghelong@outlook.com?subject=苍和世界服务器申请咨询&body=请输入你的咨询内容...">asdfghjkl088769@outlook.com</a></div>
+             <div class="info-item"><strong>白工程QQ号：</strong>3988950698</div>
+            <div class="info-item"><strong>苍和QQ号：</strong>2954085309</div>
+        </section>
+    </div>
+           
+    <!-- 注册申请弹窗 -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h2>注册加入苍和世界服务器</h2>
+            <input type="text" id="playerName" placeholder="请输入你的我的世界人物名称代号">
+            <input type="email" id="playerEmail" placeholder="请输入你的邮箱">
+            <button class="btn" onclick="submitRegistration()">提交注册</button>
+            <button class="btn" style="background: #95a5a6; margin-left: 10px;" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+
+    <!-- 注册成功弹窗 -->
+    <div class="modal" id="registerSuccessModal">
+        <div class="modal-content">
+            <h2>注册成功！</h2>
+            <p>请等待24小时内的邮箱通知，审核通过后将自动添加服务器并跳转游戏～</p>
+            <button class="btn" onclick="closeModal()">确定</button>
+        </div>
+    </div>
+
+    <!-- 审核通过弹窗 -->
+    <div class="modal" id="approvedModal">
+        <div class="modal-content">
+            <h2>审核通过！</h2>
+            <p>管理员已批准你的申请，即将自动添加服务器并进入我的世界～</p>
+            <button class="btn" onclick="enterServer()">立即进入</button>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载时检查注册信息和审核状态
+        window.addEventListener('load', function() {
+            const savedPlayer = JSON.parse(localStorage.getItem('minecraftRegisteredPlayer'));
+            if (savedPlayer) {
+                // 显示已注册信息
+                document.getElementById('registeredInfo').style.display = 'block';
+                document.getElementById('savedPlayerName').textContent = savedPlayer.name;
+                document.getElementById('savedPlayerEmail').textContent = savedPlayer.email;
+                document.getElementById('registerBtn').style.display = 'none';
+
+                // 检查是否已通过审核
+                const allPlayers = JSON.parse(localStorage.getItem('minecraftAllPlayers')) || [];
+                const approvedPlayer = allPlayers.find(p => p.id === savedPlayer.id && p.status === 'approved');
+                if (approvedPlayer) {
+                    // 显示审核通过弹窗
+                    document.getElementById('approvedModal').style.display = 'flex';
+                }
+            }
+        });
+
+        // 打开注册弹窗
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        // 关闭所有弹窗
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // 提交注册信息
+        function submitRegistration() {
+            const name = document.getElementById('playerName').value.trim();
+            const email = document.getElementById('playerEmail').value.trim();
+            if (!name || !email) {
+                alert('请填写完整的人物名称和邮箱！');
+                return;
+            }
+
+            // 检查是否已注册
+            const savedPlayer = JSON.parse(localStorage.getItem('minecraftRegisteredPlayer'));
+            if (savedPlayer) {
+                alert('你已注册过账号，请勿重复提交！');
+                closeModal();
+                return;
+            }
+
+            // 生成唯一ID，存储注册信息（永久保存，除非清除本地存储）
+            const newPlayer = {
+                id: Date.now(),
+                name,
+                email,
+                status: 'pending' // 初始状态：待审核
+            };
+            localStorage.setItem('minecraftRegisteredPlayer', JSON.stringify(newPlayer));
+
+            // 将玩家信息添加到全局玩家列表（供管理员页面读取）
+            const allPlayers = JSON.parse(localStorage.getItem('minecraftAllPlayers')) || [];
+            allPlayers.push(newPlayer);
+            localStorage.setItem('minecraftAllPlayers', JSON.stringify(allPlayers));
+
+            // 显示注册成功弹窗
+            document.getElementById('registerModal').style.display = 'none';
+            document.getElementById('registerSuccessModal').style.display = 'flex';
+
+            // 刷新页面显示已注册信息
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        }
+
+        // 进入服务器（调用我的世界协议）
+        function enterServer() {
+            window.location.href = 'minecraft://?addExternalServer苍和的世界|frp-ski.com:24800';
+            closeModal();
+        }
+
+        // 点击空白处关闭弹窗
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

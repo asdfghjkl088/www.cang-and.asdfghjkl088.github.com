@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苍和世界服务器 - 管理员后台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Microsoft YaHei', sans-serif; }
+        body { background: #f5f5f5; color: #333; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; margin-bottom: 40px; padding: 30px 0; background: #c0392b; color: #fff; border-radius: 10px; }
+        h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        .login-form { background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; text-align: center; }
+        .login-form input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 1.1rem; }
+        .btn { display: inline-block; padding: 12px 30px; background: #c0392b; color: #fff; text-decoration: none; border-radius: 5px; font-size: 1.1rem; cursor: pointer; border: none; transition: background 0.3s; }
+        .btn:hover { background: #a03020; }
+        .admin-page { display: none; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .player-list { margin-top: 20px; text-align: left; }
+        .player-item { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .player-info { flex: 1; min-width: 250px; margin-bottom: 10px; }
+        .player-status { color: #e74c3c; font-weight: bold; margin-right: 20px; }
+        .status-approved { color: #27ae60; }
+        .btn-approve { background: #27ae60; }
+        .btn-approve:hover { background: #219653; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部标题 -->
+        <header>
+            <h1>苍和世界服务器 - 管理员后台</h1>
+            <p>玩家审核与管理系统</p>
+        </header>
+
+        <!-- 管理员登录表单 -->
+        <div class="login-form" id="loginForm">
+            <h2>管理员登录</h2>
+            <input type="text" id="adminUser" placeholder="用户名">
+            <input type="password" id="adminPwd" placeholder="密码">
+            <button class="btn" onclick="verifyAdmin()">登录</button>
+        </div>
+
+        <!-- 管理员管理页面 -->
+        <div class="admin-page" id="adminPage">
+            <h2>玩家审核列表</h2>
+            <div class="player-list" id="playerList">
+                <!-- 玩家信息将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 管理员账号密码（固定）
+        const ADMIN_USER = '苍和［管理员］';
+        const ADMIN_PWD = '@12345';
+
+        // 验证管理员身份
+        function verifyAdmin() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pwd = document.getElementById('adminPwd').value.trim();
+            if (user === ADMIN_USER && pwd === ADMIN_PWD) {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('adminPage').style.display = 'block';
+                renderPlayerList();
+            } else {
+                alert('用户名或密码错误！');
+            }
+        }
+
+        // 渲染玩家列表
+        function renderPlayerList() {
+            const list = document.getElementById('playerList');
+            const allPlayers = JSON.parse(localStorage.getItem('minecraftAllPlayers')) || [];
+            
+            if (allPlayers.length === 0) {
+                list.innerHTML = '<p>暂无玩家注册申请</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            allPlayers.forEach(player => {
+                const item = document.createElement('div');
+                item.className = 'player-item';
+                item.innerHTML = `
+                    <div class="player-info">
+                        <strong>玩家代号：</strong>${player.name} | 
+                        <strong>邮箱：</strong>${player.email} | 
+                        <strong>注册时间：</strong>${new Date(player.id).toLocaleString()}
+                    </div>
+                    <div class="player-status ${player.status === 'approved' ? 'status-approved' : ''}">
+                        ${player.status === 'pending' ? '待审核' : '已通过'}
+                    </div>
+                    ${player.status === 'pending' ? 
+                        '<button class="btn btn-approve" onclick="approvePlayer(' + player.id + ')">确认通过</button>' : 
+                        '<button class="btn" disabled>已通过</button>'}
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // 批准玩家加入
+        function approvePlayer(playerId) {
+            const allPlayers = JSON.parse(localStorage.getItem('minecraftAllPlayers')) || [];
+            const playerIndex = allPlayers.findIndex(p => p.id === playerId);
+            
+            if (playerIndex !== -1) {
+                // 更新玩家状态为已通过
+                allPlayers[playerIndex].status = 'approved';
+                localStorage.setItem('minecraftAllPlayers', JSON.stringify(allPlayers));
+                
+                // 模拟发送邮箱通知（实际需玩家自行查看邮箱）
+                alert(`已批准玩家 ${allPlayers[playerIndex].name} 加入，玩家下次打开官网将自动跳转游戏！`);
+                
+                // 刷新玩家列表
+                renderPlayerList();
+            }
+        }
+    </script>
+</body>
+</html>
